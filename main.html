@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head lang="ru">
+	<meta charset = "UTF-8">
+	<title></title>
+	<link href="style.css" rel='stylesheet' type='text/css'>
+	<script>
+		window.onload = function(){
+			var v = new Array();
+			v[0] = new Array();
+			v[0][0] = 100;
+			v[1] = new Array();
+			v[1][0] = 68;
+			v[2] = new Array();
+			v[2][0] = 40;
+			v[3] = new Array();
+			v[3][0] = 33;
+			var R,i;
+			for(i=0;i<4;i++)
+				if(i!=3)
+					v[i][1] = i+2;
+				else
+					v[i][1] = 1;
+			//Сортируем цели по возастанию
+			for(i=0;i<4;i++){
+				var j;
+				for(j=1;j<4;j++)
+					if(v[i][0]<v[j][0]&&i<j){
+						R = v[i][0];
+						v[i][0] = v[j][0];
+						v[j][0] = R;
+						R = v[i][1];
+						v[i][1] = v[j][1];
+						v[j][1] = R;
+					}
+			}
+			
+			//Вычислим вес целей
+			var sum=0;
+			for(i=0;i<4;i++){
+				sum+=v[i][0];
+			}
+			var s = new Array();
+			for(i=0;i<4;i++){
+				s[i]=v[i][0]/sum;
+			}
+			document.getElementById('Z22').innerHTML=s[0];
+			document.getElementById('Z33').innerHTML=s[1];
+			document.getElementById('Z44').innerHTML=s[2];
+			document.getElementById('Z11').innerHTML=s[3];
+			document.getElementById('result').innerHTML="Наилучшей альтернативой для получения максимальной прибыли является...";
+		}
+		function schet(){
+	   		var v = new Array();
+			v[0] = new Array();
+			v[0][0] = parseInt(document.getElementById('Z2').value,10);
+			v[1] = new Array();
+			v[1][0] = parseInt(document.getElementById('Z3').value,10);
+			v[2] = new Array();
+			v[2][0] = parseInt(document.getElementById('Z4').value,10);
+			v[3] = new Array();
+			v[3][0] = parseInt(document.getElementById('Z1').value,10);
+			var R,i,flag;
+			flag = 0;
+			for(i=0;i<4;i++)
+				if(v[i][0]==100)
+					flag++;
+			if(flag<2&&!isNaN(v[0][0])&&!isNaN(v[1][0])&&!isNaN(v[2][0])&&!isNaN(v[3][0])){	
+				for(i=0;i<4;i++){
+						if(i!=3)
+							buf = i+2;
+						else
+							buf = 1;
+						Z = 'Z' + buf + buf + buf;	
+					if(document.getElementById(Z).innerHTML == "Z1")
+						v[i][1] = 1;
+					if(document.getElementById(Z).innerHTML == "Z2")
+						v[i][1] = 2;
+					if(document.getElementById(Z).innerHTML == "Z3")
+						v[i][1] = 3;
+					if(document.getElementById(Z).innerHTML == "Z4")
+						v[i][1] = 4;
+				}
+				//Сортировка целей по возастанию
+				for(i=0;i<3;i++){
+					var j;
+					for(j=i+1;j<4;j++)
+						if(v[i][0]<v[j][0]&&i<j){
+							R = v[i][0];
+							v[i][0] = v[j][0];
+							v[j][0] = R;
+							R = v[i][1];
+							v[i][1] = v[j][1];
+							v[j][1] = R;
+						}
+				}
+				var Z;
+				var buf;
+				for(i=0;i<4;i++){
+					if(i!=3)
+						buf = i+2;
+					else
+						buf = 1;
+					Z = 'Z' + buf + buf + buf;
+					if(v[i][1]==1)
+						document.getElementById(Z).innerHTML="Z1";
+					if(v[i][1]==2)
+						document.getElementById(Z).innerHTML="Z2";
+					if(v[i][1]==3)
+						document.getElementById(Z).innerHTML="Z3";
+					if(v[i][1]==4)
+						document.getElementById(Z).innerHTML="Z4";
+					Z = 'Z'+ buf;
+					document.getElementById(Z).value = v[i][0];
+
+				}
+				//Выполним сравнение целе и корректировку их оценок
+				for(i=0;i<3;i++){
+					var j;
+					for(j=i+1;j<4;j++){
+						var c;
+						for(c=2;c<4;c++)
+							if(v[i][0]<=v[j][0]+v[c][0]&&(i<j)&&(c>j)){
+								v[i][0]+=30;
+							}
+					}
+				}
+				//Вычислим вес целей
+				var sum=0;
+				for(i=0;i<4;i++){
+					sum+=v[i][0];
+				}
+				var s = new Array();
+				for(i=0;i<4;i++){
+					s[i]=v[i][0]/sum;
+				}
+				document.getElementById('Z22').innerHTML=s[0];
+				document.getElementById('Z33').innerHTML=s[1];
+				document.getElementById('Z44').innerHTML=s[2];
+				document.getElementById('Z11').innerHTML=s[3];
+				var result = "Наилучшей альтернативой для получения максимальной прибыли является ";
+				if(v[0][1]==1)
+					result += "открытие собственного производства.";
+				if(v[0][1]==2)
+					result += "увеличение затрат на рекламу.";
+				if(v[0][1]==3)
+					result += "расширение рынка сбыта.";
+				if(v[0][1]==4)
+					result += "снижение цен с целью увеличения оборота.";
+				document.getElementById('result').innerHTML= result;
+			}
+			else{
+				alert("Введите другие значения!!!");
+			}
+		}
+</script>
+</head>
+<body>
+	<h1> Компания "Проспект" хочет получить максимальную прибыль. Для этого руководство пригласило экспертов для выбора наилучшей альтернативы из предложенных:</h1>
+	<ol>
+		<li>Открытие собственного производства;</li>
+		<li>Увеличение затрат на рекламу;</li>
+		<li>Расширение рынка сбыта;</li>
+		<li>Снижение цен с целью увеличения оборота.</li>
+	</ol>
+<table class="features-table">
+<thead>
+	<tr>
+		<td>Zj</td>
+		<td class="green" id = "Z222">Z2</td>
+		<td class="green" id = "Z333"nowrap>Z3</td>
+		<td class="green" id = "Z444">Z4</td>
+		<td class="green" id = "Z111">Z1</td>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td nowrap>Pj</td>
+		<td class="green"><input id="Z2" type="text" value ="100"></td>
+		<td class="green"><input id="Z3" type="text" value ="72"></td>
+		<td class="green"><input id="Z4" type="text" value ="41"></td>
+		<td class="green"><input id="Z1" type="text" value ="31"></td>
+	</tr>
+</tbody>
+<tfoot>
+	<tr>
+		<td nowrap>Веса целей</td>
+		<td class="green" id = "Z22">0</td>
+		<td class="green" id = "Z33">0</td>
+		<td class="green" id = "Z44">0</td>
+		<td class="green" id = "Z11">0</td>
+	</tr>
+</tfoot> 
+</table>
+<input type=button class = "but" value="Рассчитать:" onclick = "schet()">
+<h3>В итоге получаем, что:</h3>
+<p id = "result"></p>
+</body>
+</html>
